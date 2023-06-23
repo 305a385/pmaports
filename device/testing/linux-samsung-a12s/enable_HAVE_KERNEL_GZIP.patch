@@ -1,0 +1,12 @@
+diff --git a/init/Kconfig b/init/Kconfig
+index 32c24950c4ce..2d6160e39b6a 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -222,6 +222,7 @@ config BUILD_SALT
+ 
+ config HAVE_KERNEL_GZIP
+ 	bool
++	default y
+ 
+ config HAVE_KERNEL_BZIP2
+ 	bool

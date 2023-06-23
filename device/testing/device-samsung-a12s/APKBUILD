@@ -1,0 +1,28 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-samsung-a12s
+pkgdesc="Samsung Galaxy A12s"
+pkgver=0.1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-samsung-a12s
+	postmarketos-base
+	mkbootimg
+"
+makedepends="devicepkg-dev"
+source="deviceinfo"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+sha512sums="
+84dfef8e73c918c4651f13f5d058d961330d1f1512ff424ff46fd0949de1da2e914d16639643d181f6005beef1589295a2b0ff6befbd39f88fd28df200129c6a  deviceinfo
+"

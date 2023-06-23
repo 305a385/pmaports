@@ -1,0 +1,65 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-samsung-a12s
+pkgver=6.4.0
+pkgrel=0
+pkgdesc="Samsung Galaxy A12s kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="samsung-a12s"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	devicepkg-dev
+	findutils
+	flex
+	openssl-dev
+	perl
+	linux-headers
+	xz
+	linux-firmware
+"
+
+# Source
+_repository="linux"
+_commit="45a3e24f65e90a047bef86f927ebdc4c710edaa1"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/torvalds/$_repository/archive/$_commit.tar.gz
+	$_config
+	enable_HAVE_KERNEL_GZIP.patch
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	REPLACE_GCCH=0
+
+	default_prepare
+	. downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+
+	make dtbs_install O="$_outdir" ARCH="$_carch" \
+		INSTALL_DTBS_PATH="$pkgdir"/boot/dtbs
+}
+
+sha512sums="
+a9e03ec7c26bef9ebc970134a3330b63ea8ae666860578f179df8261d75f463852cdbcbf132e2063a7624da7421028a355b623987112cb175699e3e53434f473  linux-samsung-a12s-45a3e24f65e90a047bef86f927ebdc4c710edaa1.tar.gz
+75c3e77c7794f2f7e81c59c051fa11cdac6a32cf157ab661b6216daec9b15fb6f38968e1117f19da530e97f35a319bc074469b32c280f6501bf355b4f3d1a706  config-samsung-a12s.aarch64
+3822c823239f2892ab874cb51b67cb957897e554b08f5c5f09a3573bab4977f8227926f30252f6565a0e42bb1b285784cac0e1d781870d015a5391618372a6c1  enable_HAVE_KERNEL_GZIP.patch
+"
